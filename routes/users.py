@@ -1,15 +1,15 @@
 from fastapi import APIRouter, HTTPException, status
-from models.users import User, UserSignIn
+from models.users import User, UserSignIn , NewUser
 
 
 user_router = APIRouter(
-    tags=["User"]
+
 )
 
 users = {}
 
-@user_router.post("/signup",response_model='message')
-async def sign_new_user(data: UserSignIn) -> dict:
+@user_router.post("/signup")
+async def sign_new_user(data: NewUser) -> dict:
     if data.email in users:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,

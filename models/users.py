@@ -5,8 +5,10 @@ from models.events import Event
 
 class User(BaseModel):
     email: EmailStr = Field(...,examples=["fastapi@packt.com"])
-    password: str = Field(...,examples=['strong!!!'])
     events: Optional[List[Event]] = Field(None,examples=[])
+
+class NewUser(User):
+    password: str = Field(...,examples=['strong!!!'])
 
 
 class UserSignIn(BaseModel):
