@@ -1,9 +1,14 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr , Field
 from typing import Optional, List
 from models.events import Event
 
 
 class User(BaseModel):
-    email: EmailStr
-    password: str
-    events: Optional[List[Event]]
+    email: EmailStr = Field(...,examples=["fastapi@packt.com"])
+    password: str = Field(...,examples=['strong!!!'])
+    events: Optional[List[Event]] = Field(None,examples=[])
+
+
+class UserSignIn(BaseModel):
+    email: EmailStr = Field(...,examples=["fastapi@packt.com"])
+    password: str = Field(...,examples=["strong!!!",])
