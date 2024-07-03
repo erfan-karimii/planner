@@ -1,6 +1,6 @@
 from typing import List
-from fastapi import APIRouter,HTTPException, status , Depends
-from sqlalchemy import select , delete
+from fastapi import APIRouter, HTTPException, status, Depends
+from sqlalchemy import select, delete
 from database.connection import get_session
 from models.events import Event, EventUpdate
 
@@ -17,18 +17,18 @@ async def retrieve_all_events(session=Depends(get_session)) -> List[Event]:
 
 
 @event_router.get("/{id}", response_model=Event)
-async def retrieve_event(id: int, session=Depends(get_session))-> Event:
+async def retrieve_event(id: int, session=Depends(get_session)) -> Event:
     event = session.get(Event, id)
     if event:
         return event
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
-        detail="Event with supplied ID does not exist"
-        )
+        detail="Event with supplied ID does not exist",
+    )
 
 
 @event_router.post("/new")
-async def create_event(new_event: Event,session=Depends(get_session)) -> dict:
+async def create_event(new_event: Event, session=Depends(get_session)) -> dict:
     session.add(new_event)
     session.commit()
     session.refresh(new_event)
@@ -36,18 +36,17 @@ async def create_event(new_event: Event,session=Depends(get_session)) -> dict:
 
 
 @event_router.delete("/delete/{id}")
-async def delete_event(id: int, session=Depends(get_session))-> dict:
+async def delete_event(id: int, session=Depends(get_session)) -> dict:
     event = session.get(Event, id)
     if event:
         session.delete(event)
         session.commit()
-        return {
-        "message": "Event deleted successfully"
-        }
+        return {"message": "Event deleted successfully"}
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
-        detail="Event with supplied ID does not exist"
+        detail="Event with supplied ID does not exist",
     )
+
 
 @event_router.delete("/")
 async def delete_all_events(session=Depends(get_session)) -> dict:
@@ -59,13 +58,14 @@ async def delete_all_events(session=Depends(get_session)) -> dict:
     except Exception as e:
         session.rollback()
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )
 
 
 @event_router.put("/edit/{id}", response_model=Event)
-async def update_event(id: int, new_data: EventUpdate,session=Depends(get_session)) -> Event:
+async def update_event(
+    id: int, new_data: EventUpdate, session=Depends(get_session)
+) -> Event:
     event = session.get(Event, id)
     if event:
         event_data = new_data.model_dump(exclude_unset=True)
@@ -75,9 +75,8 @@ async def update_event(id: int, new_data: EventUpdate,session=Depends(get_sessio
         session.commit()
         session.refresh(event)
         return event
-    
+
     raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Event with supplied ID does not exist"
-        )    
-    
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail="Event with supplied ID does not exist",
+    )

@@ -8,11 +8,13 @@ from routes.users import user_router
 from routes.events import event_router
 import uvicorn
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Load the ML model
     conn()
     yield
+
 
 app = FastAPI(lifespan=lifespan)
 
